@@ -1,6 +1,7 @@
 import axiosInstance from '@/lib/axiosInstance';
 import { LoginSchema } from '@/lib/schemas/auth/LoginSchema';
 import { z } from 'zod';
+import Cookies from 'js-cookie';
 
 export const login = async (values: z.infer<typeof LoginSchema>) => {
   const { success, data } = LoginSchema.safeParse(values);
@@ -17,10 +18,18 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
       password,
     });
 
+    if (response.status !== 200) {
+      throw new Error('Invalid email or password');
+    }
+
+    axiosInstance.defaults.headers.common['Authorization'] =
+      `Bearer ${response.data.token}`;
+
+    Cookies.set('token', response.data.token);
+
     return {
       success: true,
       data: response.data,
-      headers: response.headers,
     };
   } catch (error) {
     return {
