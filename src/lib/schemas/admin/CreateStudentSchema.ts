@@ -15,9 +15,9 @@ export const CreateStudentSchema = z.object({
     street: z.string(),
     city: z.string(),
     state: z.string(),
-    zip: z.string(),
+    zipCode: z.string(),
   }),
-  rollNumber: z.string().optional(),
-  admissionDate: z.string().optional(),
-  departmentId: z.string().optional(),
+  rollNumber: z.string(),
+  admissionDate: z.coerce.date(),
+  departmentId: z.string(),
 });

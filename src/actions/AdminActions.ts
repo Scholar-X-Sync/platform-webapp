@@ -1,4 +1,5 @@
 'use server';
+
 import axiosInstance from '@/lib/axiosInstance';
 import { z } from 'zod';
 import { CreateStudentSchema } from '@/lib/schemas/admin/CreateStudentSchema';
@@ -11,21 +12,20 @@ export const createStudent = async (
   if (!success) {
     throw new Error('Invalid student details');
   }
-  const { firstName, lastName, email, password, role, phoneNumber, address } =
-    data;
+
+  const {
+    firstName,
+    lastName,
+    email,
+    password,
+    role,
+    phoneNumber,
+    address,
+    rollNumber,
+    departmentId,
+    admissionDate,
+  } = data;
   try {
-    console.log(
-      'Creating student with values:======================================>',
-      {
-        firstName,
-        lastName,
-        email,
-        password,
-        role,
-        phoneNumber,
-        ...address,
-      },
-    );
     const response = await axiosInstance.post('/user', {
       firstName,
       lastName,
@@ -33,7 +33,10 @@ export const createStudent = async (
       password,
       role,
       phoneNumber,
-      ...address,
+      address,
+      rollNumber,
+      departmentId,
+      admissionDate,
     });
 
     if (response.status !== 201) {
@@ -45,6 +48,7 @@ export const createStudent = async (
       data: response.data,
     };
   } catch (e) {
+    console.log(e);
     return {
       error: e instanceof Error ? e.message : 'Something went wrong',
       success: false,
