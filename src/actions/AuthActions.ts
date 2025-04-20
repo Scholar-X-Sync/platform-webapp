@@ -38,3 +38,17 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
     };
   }
 };
+
+export const logout = async () => {
+  try {
+    await axiosInstance.get('/auth/logout');
+    return {
+      success: true,
+    };
+  } catch (error) {
+    return {
+      error: error instanceof Error ? error.message : 'Something went wrong',
+      success: false,
+    };
+  }
+};
