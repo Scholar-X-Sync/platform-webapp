@@ -93,8 +93,10 @@ const CreateStudent = () => {
           Please enter the student details to create a new account
         </p>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* First Name */}
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-6 text-white"
+          >
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -255,7 +257,7 @@ const CreateStudent = () => {
                 control={form.control}
                 name="departmentId"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col">
+                  <FormItem className="flex flex-col w-full">
                     <FormLabel>Department</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
@@ -264,7 +266,7 @@ const CreateStudent = () => {
                             variant="outline"
                             role="combobox"
                             className={cn(
-                              'w-[200px] justify-between',
+                              'w-[80%] justify-between',
                               !field.value && 'text-muted-foreground',
                             )}
                           >
@@ -277,7 +279,7 @@ const CreateStudent = () => {
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
-                      <PopoverContent className="w-[200px] p-0">
+                      <PopoverContent className="w-full p-0">
                         <Command>
                           <CommandInput placeholder="Search Department..." />
                           <CommandList>
