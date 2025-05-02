@@ -29,7 +29,7 @@ const CreateStudent = () => {
       password: '',
       role: 'student',
       phoneNumber: '',
-      address: { city: '', state: '', street: '', zip: '' },
+      address: { city: '', state: '', street: '', zipCode: '' },
       rollNumber: '',
       admissionDate: '',
       departmentId: '',
@@ -38,12 +38,6 @@ const CreateStudent = () => {
 
   const onSubmit = async (values: z.infer<typeof CreateStudentSchema>) => {
     try {
-      // console.log(
-      //   'Form Values:======================================>',
-      //   values,
-      // );
-
-
       const response = await createStudent(values);
 
       if (!response.success) {
@@ -263,7 +257,7 @@ const CreateStudent = () => {
                 />
                 <FormField
                   control={form.control}
-                  name="address.zip"
+                  name="address.zipCode"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Zip</FormLabel>

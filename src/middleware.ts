@@ -10,18 +10,23 @@ const roleRoutes: Record<string, string> = {
 export default function middleware(request: NextRequest) {
   try {
     const path = request.nextUrl.pathname;
-    if(path==='/') return NextResponse.next();
+
     const token = request.cookies.get('token')?.value;
 
     if (!token && path !== '/login') {
       return NextResponse.redirect(new URL('/login', request.url));
     }
 
+    const decodedToken = jwt.decode(token!) as JwtPayload;
+
     if (token && path === '/login') {
-      return NextResponse.redirect(new URL('/', request.url));
+      if (decodedToken.role === 'admin') {
+        return NextResponse.redirect(new URL('/admin', request.url));
+      } else if (decodedToken.role === 'student') {
+        return NextResponse.redirect(new URL('/student', request.url));
+      }
     }
 
-    const decodedToken = jwt.decode(token!) as JwtPayload;
     if (decodedToken) {
       for (const [role, rolePrefix] of Object.entries(roleRoutes)) {
         if (path.startsWith(rolePrefix) && decodedToken.role !== role) {

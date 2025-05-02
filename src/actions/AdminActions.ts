@@ -11,29 +11,28 @@ export const createStudent = async (
   if (!success) {
     throw new Error('Invalid student details');
   }
-  const { firstName, lastName, email, password, role, phoneNumber, address } =
-    data;
+  const {
+    firstName,
+    lastName,
+    email,
+    password,
+    role,
+    phoneNumber,
+    address,
+    rollNumber,
+  } = data;
   try {
-    console.log(
-      'Creating student with values:======================================>',
-      {
-        firstName,
-        lastName,
-        email,
-        password,
-        role,
-        phoneNumber,
-        ...address,
-      },
-    );
-    const response = await axiosInstance.post('/user/createUser', {
+    const response = await axiosInstance.post('/user', {
       firstName,
       lastName,
       email,
       password,
       role,
       phoneNumber,
-      ...address,
+      rollNumber,
+      address,
+      admissionDate: new Date().toISOString(),
+      departmentId: '11067189-2de7-4de2-a84e-d3ce6d0c6c7c',
     });
 
     if (response.status !== 201) {
