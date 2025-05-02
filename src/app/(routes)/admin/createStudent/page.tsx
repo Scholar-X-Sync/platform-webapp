@@ -38,10 +38,10 @@ const CreateStudent = () => {
 
   const onSubmit = async (values: z.infer<typeof CreateStudentSchema>) => {
     try {
-      console.log(
-        'Form Values:======================================>',
-        values,
-      );
+      // console.log(
+      //   'Form Values:======================================>',
+      //   values,
+      // );
 
 
       const response = await createStudent(values);
@@ -190,27 +190,6 @@ const CreateStudent = () => {
                         <Input
                           className="pl-10"
                           placeholder="21891A6638"
-                          {...field}
-                        />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="phoneNumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone Number</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Text className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                        <Input
-                          className="pl-10"
-                          placeholder="1234567890"
                           {...field}
                         />
                       </div>

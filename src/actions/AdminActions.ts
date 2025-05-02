@@ -26,7 +26,7 @@ export const createStudent = async (
         ...address,
       },
     );
-    const response = await axiosInstance.post('/user', {
+    const response = await axiosInstance.post('/user/createUser', {
       firstName,
       lastName,
       email,

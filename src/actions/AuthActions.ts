@@ -22,10 +22,11 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
       throw new Error('Invalid email or password');
     }
 
-    axiosInstance.defaults.headers.common['Authorization'] =
-      `Bearer ${response.data.token}`;
+    axiosInstance.defaults.headers.common[
+      'Authorization'
+    ] = `Bearer ${response.data.token}`;
 
-    Cookies.set('token', response.data.token);
+    Cookies.set('token', response.data.token, { expires: 30 * 60 * 1000 });
 
     return {
       success: true,

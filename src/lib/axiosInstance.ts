@@ -8,7 +8,10 @@ const axiosInstance = axios.create({
   },
   withCredentials: true,
 });
-
+console.log(
+  'Axios instance created with base URL: ',
+  process.env.NEXT_PUBLIC_API_BASE_URL,
+);
 axiosInstance.interceptors.request.use(
   (config) => {
     return config;

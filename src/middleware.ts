@@ -10,6 +10,7 @@ const roleRoutes: Record<string, string> = {
 export default function middleware(request: NextRequest) {
   try {
     const path = request.nextUrl.pathname;
+    if(path==='/') return NextResponse.next();
     const token = request.cookies.get('token')?.value;
 
     if (!token && path !== '/login') {
