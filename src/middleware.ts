@@ -16,12 +16,20 @@ export default function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/login', request.url));
     }
 
-    if (token && path === '/login') {
-      return NextResponse.redirect(new URL('/', request.url));
-    }
-
     const decodedToken = jwt.decode(token!) as JwtPayload;
-    if (decodedToken) {
+    if (token) {
+      if (path === '/login') {
+        return NextResponse.redirect(new URL('/', request.url));
+      }
+
+      if (path === '/') {
+        if (decodedToken.role && roleRoutes[decodedToken.role]) {
+          return NextResponse.redirect(
+            new URL(roleRoutes[decodedToken.role], request.url),
+          );
+        }
+      }
+
       for (const [role, rolePrefix] of Object.entries(roleRoutes)) {
         if (path.startsWith(rolePrefix) && decodedToken.role !== role) {
           return NextResponse.redirect(new URL('/', request.url));

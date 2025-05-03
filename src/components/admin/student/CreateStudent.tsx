@@ -1,5 +1,6 @@
 'use client';
 import { createStudent } from '@/actions/AdminActions';
+import { Button } from '@/components/ui/button';
 import { getAllDepartments } from '@/actions/DepartmentActions';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -20,6 +21,11 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { CreateStudentSchema } from '@/lib/schemas/admin/CreateStudentSchema';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Mail, Lock, Text } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import React from 'react';
 import {
   Popover,
   PopoverContent,
@@ -56,11 +62,10 @@ const CreateStudent = () => {
       phoneNumber: '',
       address: { city: '', state: '', street: '', zipCode: '' },
       rollNumber: '',
-      admissionDate: new Date(),
+      admissionDate: '',
       departmentId: '',
     },
   });
-
   useEffect(() => {
     const fetchDepartments = async () => {
       const response = await getAllDepartments();
