@@ -13,7 +13,9 @@ export default function middleware(request: NextRequest) {
     const token = request.cookies.get('token')?.value;
 
     if (!token && path !== '/login') {
-      return NextResponse.redirect(new URL('/login', request.url));
+      if (path !== '/') {
+        return NextResponse.redirect(new URL('/', request.url));
+      }
     }
 
     const decodedToken = jwt.decode(token!) as JwtPayload;
