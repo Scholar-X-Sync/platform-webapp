@@ -11,6 +11,7 @@ export const createStudent = async (
   if (!success) {
     throw new Error('Invalid student details');
   }
+  
   const {
     firstName,
     lastName,
@@ -20,6 +21,8 @@ export const createStudent = async (
     phoneNumber,
     address,
     rollNumber,
+    departmentId,
+    admissionDate,
   } = data;
   try {
     const response = await axiosInstance.post('/user', {

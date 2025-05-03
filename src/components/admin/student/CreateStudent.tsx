@@ -1,6 +1,17 @@
 'use client';
 import { createStudent } from '@/actions/AdminActions';
 import { Button } from '@/components/ui/button';
+import { getAllDepartments } from '@/actions/DepartmentActions';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
 import {
   Form,
   FormField,
@@ -15,10 +26,30 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Mail, Lock, Text } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { CreateStudentSchema } from '@/lib/schemas/admin/CreateStudentSchema';
+import { cn } from '@/lib/utils';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { format } from 'date-fns';
+import {
+  Mail,
+  Lock,
+  Text,
+  CalendarIcon,
+  ChevronsUpDown,
+  Check,
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const CreateStudent = () => {
+  const [departments, setDepartments] = React.useState<any[]>([]);
   const router = useRouter();
   const form = useForm<z.infer<typeof CreateStudentSchema>>({
     resolver: zodResolver(CreateStudentSchema),
@@ -35,6 +66,13 @@ const CreateStudent = () => {
       departmentId: '',
     },
   });
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      const response = await getAllDepartments();
+      setDepartments(response.data);
+    };
+    fetchDepartments();
+  }, []);
 
   const onSubmit = async (values: z.infer<typeof CreateStudentSchema>) => {
     try {
@@ -43,7 +81,6 @@ const CreateStudent = () => {
       if (!response.success) {
         throw new Error(response.error || 'Failed to create student');
       }
-      console.log('Student created successfully:', response.data);
 
       router.push('/admin');
     } catch (error) {
@@ -60,11 +97,11 @@ const CreateStudent = () => {
         <p className="text-center text-gray-500 dark:text-gray-400">
           Please enter the student details to create a new account
         </p>
-
-        {/* Form Provider Wrapper */}
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* First Name */}
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-6 text-white"
+          >
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -86,8 +123,6 @@ const CreateStudent = () => {
                   </FormItem>
                 )}
               />
-
-              {/* Last Name */}
               <FormField
                 control={form.control}
                 name="lastName"
@@ -104,8 +139,6 @@ const CreateStudent = () => {
                   </FormItem>
                 )}
               />
-
-              {/* Email */}
               <FormField
                 control={form.control}
                 name="email"
@@ -126,8 +159,6 @@ const CreateStudent = () => {
                   </FormItem>
                 )}
               />
-
-              {/* Password */}
               <FormField
                 control={form.control}
                 name="password"
@@ -149,8 +180,6 @@ const CreateStudent = () => {
                   </FormItem>
                 )}
               />
-
-              {/* Phone Number */}
               <FormField
                 control={form.control}
                 name="phoneNumber"
@@ -171,7 +200,6 @@ const CreateStudent = () => {
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="rollNumber"
@@ -192,9 +220,103 @@ const CreateStudent = () => {
                   </FormItem>
                 )}
               />
-
-              {/* Address */}
-              <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="admissionDate"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Admission Date</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant={'outline'}
+                            className={cn(
+                              'w-[240px] pl-3 text-left font-normal',
+                              !field.value && 'text-muted-foreground',
+                            )}
+                          >
+                            {field.value ? (
+                              format(field.value, 'PPP')
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="departmentId"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col w-full">
+                    <FormLabel>Department</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            className={cn(
+                              'w-[80%] justify-between',
+                              !field.value && 'text-muted-foreground',
+                            )}
+                          >
+                            {field.value
+                              ? departments.find(
+                                  (dept) => dept.id === field.value,
+                                )?.name
+                              : 'Select Department'}
+                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-full p-0">
+                        <Command>
+                          <CommandInput placeholder="Search Department..." />
+                          <CommandList>
+                            <CommandEmpty>No Department found.</CommandEmpty>
+                            <CommandGroup>
+                              {departments.map((department) => (
+                                <CommandItem
+                                  value={department.name}
+                                  key={department.id}
+                                  onSelect={() => field.onChange(department.id)}
+                                >
+                                  <Check
+                                    className={cn(
+                                      'mr-2 h-4 w-4',
+                                      field.value === department.id
+                                        ? 'opacity-100'
+                                        : 'opacity-0',
+                                    )}
+                                  />
+                                  {department.name}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="grid grid-cols-2 gap-4 col-span-2">
                 <FormField
                   control={form.control}
                   name="address.street"
@@ -277,7 +399,6 @@ const CreateStudent = () => {
                 />
               </div>
             </div>
-
             <Button type="submit" className="w-full">
               Create Student
             </Button>
