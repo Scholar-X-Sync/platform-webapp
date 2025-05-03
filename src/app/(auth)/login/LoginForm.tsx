@@ -16,8 +16,10 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Mail, Lock } from 'lucide-react';
 import { login } from '@/actions/AuthActions';
+import { useRouter } from 'next/navigation';
 
 const LoginForm = () => {
+  const router = useRouter();
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
@@ -27,9 +29,8 @@ const LoginForm = () => {
   });
 
   async function onSubmit(values: z.infer<typeof LoginSchema>) {
-    const response = await login(values);
-
-    console.log(response);
+    await login(values);
+    router.push('/');
   }
 
   return (

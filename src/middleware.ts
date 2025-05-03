@@ -1,21 +1,47 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
-const protectedRoutes = ['/', '/dashboard'];
+const roleRoutes: Record<string, string> = {
+  admin: '/admin',
+  student: '/student',
+};
 
 export default function middleware(request: NextRequest) {
-  const path = request.nextUrl.pathname;
-  const token = request.cookies.get('token')?.value;
+  try {
+    const path = request.nextUrl.pathname;
+    const token = request.cookies.get('token')?.value;
 
-  if (!token && protectedRoutes.includes(path)) {
+    if (!token && path !== '/login') {
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
+
+    const decodedToken = jwt.decode(token!) as JwtPayload;
+    if (token) {
+      if (path === '/login') {
+        return NextResponse.redirect(new URL('/', request.url));
+      }
+
+      if (path === '/') {
+        if (decodedToken.role && roleRoutes[decodedToken.role]) {
+          return NextResponse.redirect(
+            new URL(roleRoutes[decodedToken.role], request.url),
+          );
+        }
+      }
+
+      for (const [role, rolePrefix] of Object.entries(roleRoutes)) {
+        if (path.startsWith(rolePrefix) && decodedToken.role !== role) {
+          return NextResponse.redirect(new URL('/', request.url));
+        }
+      }
+    }
+
+    return NextResponse.next();
+  } catch (error) {
+    request.cookies.delete('token');
     return NextResponse.redirect(new URL('/login', request.url));
   }
-
-  if (token && path === '/login') {
-    return NextResponse.redirect(new URL('/', request.url));
-  }
-
-  return NextResponse.next();
 }
 
 export const config = {
