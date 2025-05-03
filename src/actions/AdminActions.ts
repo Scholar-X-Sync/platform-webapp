@@ -11,7 +11,7 @@ export const createStudent = async (
   if (!success) {
     throw new Error('Invalid student details');
   }
-  
+
   const {
     firstName,
     lastName,
@@ -34,8 +34,8 @@ export const createStudent = async (
       phoneNumber,
       rollNumber,
       address,
-      admissionDate: new Date().toISOString(),
-      departmentId: '11067189-2de7-4de2-a84e-d3ce6d0c6c7c',
+      admissionDate,
+      departmentId,
     });
 
     if (response.status !== 201) {
@@ -73,3 +73,4 @@ export const getAllStudents = async () => {
     };
   }
 };
+
